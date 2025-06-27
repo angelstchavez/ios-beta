@@ -66,7 +66,7 @@ const Page: React.FC = () => {
   const app = sampleApps.find((a) => a.id === openApp);
 
   return (
-    <div className="relative h-screen w-screen bg-gray-100 overflow-hidden">
+    <div className="relative h-screen w-screen bg-neutral-900 overflow-hidden">
       {/* Ventana abierta */}
       {app && <AppWindow app={app} onClose={handleClose} />}
 

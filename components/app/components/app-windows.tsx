@@ -12,7 +12,7 @@ interface AppWindowProps {
 
 const AppWindow: React.FC<AppWindowProps> = ({ app, onClose }) => {
   return (
-    <div className="absolute top-4 left-4 right-4 bottom-26 bg-white shadow-xl rounded-xl border border-gray-300 flex flex-col z-20 overflow-hidden">
+    <div className="absolute top-4 left-4 right-4 bottom-24 bg-white shadow-xl rounded-xl border border-gray-300 flex flex-col z-20 overflow-hidden">
       {/* Barra superior */}
       <div className="flex items-center justify-between px-4 py-2 bg-gray-100 border-b border-gray-300">
         <div className="flex items-center gap-2">

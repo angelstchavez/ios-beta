@@ -18,11 +18,11 @@ interface MacOSDockProps {
   className?: string;
 }
 
-// Default config for SSR - will be updated on client
+// Configuración más pequeña para el dock
 const DEFAULT_CONFIG = {
-  baseIconSize: 64,
-  maxScale: 1.6,
-  effectWidth: 240
+  baseIconSize: 48, // Reducido de 64 a 48
+  maxScale: 1.4, // Reducido de 1.6 a 1.4
+  effectWidth: 180, // Reducido de 240 a 180
 };
 
 const MacOSDock: React.FC<MacOSDockProps> = ({
@@ -38,49 +38,47 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
   const [currentPositions, setCurrentPositions] = useState<number[]>([]);
   const [isClient, setIsClient] = useState(false);
   const [config, setConfig] = useState(DEFAULT_CONFIG);
-  
+
   const dockRef = useRef<HTMLDivElement>(null);
   const iconRefs = useRef<(HTMLDivElement | null)[]>([]);
   const animationFrameRef = useRef<number | undefined>(undefined);
   const lastMouseMoveTime = useRef<number>(0);
 
-  // Responsive size calculations based on viewport
+  // Configuración responsiva más pequeña
   const getResponsiveConfig = useCallback(() => {
     if (!isClient || typeof window === "undefined") {
       return DEFAULT_CONFIG;
     }
 
-    // Base calculations on smaller dimension for better mobile experience
     const smallerDimension = Math.min(window.innerWidth, window.innerHeight);
 
-    // Scale icon size based on screen size
     if (smallerDimension < 480) {
-      // Mobile phones
+      // Mobile phones - más pequeño
       return {
-        baseIconSize: Math.max(40, smallerDimension * 0.08),
-        maxScale: 1.4,
-        effectWidth: smallerDimension * 0.4,
-      };
-    } else if (smallerDimension < 768) {
-      // Tablets
-      return {
-        baseIconSize: Math.max(48, smallerDimension * 0.07),
-        maxScale: 1.5,
+        baseIconSize: Math.max(32, smallerDimension * 0.06), // Reducido
+        maxScale: 1.3,
         effectWidth: smallerDimension * 0.35,
       };
-    } else if (smallerDimension < 1024) {
-      // Small laptops
+    } else if (smallerDimension < 768) {
+      // Tablets - más pequeño
       return {
-        baseIconSize: Math.max(56, smallerDimension * 0.06),
-        maxScale: 1.6,
+        baseIconSize: Math.max(40, smallerDimension * 0.055), // Reducido
+        maxScale: 1.35,
         effectWidth: smallerDimension * 0.3,
       };
-    } else {
-      // Desktop and large screens
+    } else if (smallerDimension < 1024) {
+      // Small laptops - más pequeño
       return {
-        baseIconSize: Math.max(64, Math.min(80, smallerDimension * 0.05)),
-        maxScale: 1.8,
-        effectWidth: 300,
+        baseIconSize: Math.max(44, smallerDimension * 0.05), // Reducido
+        maxScale: 1.4,
+        effectWidth: smallerDimension * 0.25,
+      };
+    } else {
+      // Desktop - más pequeño
+      return {
+        baseIconSize: Math.max(48, Math.min(60, smallerDimension * 0.04)), // Reducido
+        maxScale: 1.5, // Reducido de 1.8
+        effectWidth: 200, // Reducido de 300
       };
     }
   }, [isClient]);
@@ -99,7 +97,7 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
 
   const { baseIconSize, maxScale, effectWidth } = config;
   const minScale = 1.0;
-  const baseSpacing = Math.max(4, baseIconSize * 0.08);
+  const baseSpacing = Math.max(3, baseIconSize * 0.06); // Espaciado más pequeño
 
   // Update config on window resize (only on client)
   useEffect(() => {
@@ -230,7 +228,7 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
 
       if (dockRef.current) {
         const rect = dockRef.current.getBoundingClientRect();
-        const padding = Math.max(8, baseIconSize * 0.12);
+        const padding = Math.max(6, baseIconSize * 0.1); // Padding más pequeño
         setMouseX(e.clientX - rect.left - padding);
       }
     },
@@ -242,7 +240,7 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
   }, []);
 
   const createBounceAnimation = (element: HTMLElement) => {
-    const bounceHeight = Math.max(-8, -baseIconSize * 0.15);
+    const bounceHeight = Math.max(-6, -baseIconSize * 0.12); // Bounce más pequeño
     element.style.transition = "transform 0.2s ease-out";
     element.style.transform = `translateY(${bounceHeight}px)`;
 
@@ -257,8 +255,8 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
         const gsap = (window as any).gsap;
         const bounceHeight =
           currentScales[index] > 1.3
-            ? -baseIconSize * 0.2
-            : -baseIconSize * 0.15;
+            ? -baseIconSize * 0.18
+            : -baseIconSize * 0.12;
 
         gsap.to(iconRefs.current[index], {
           y: bounceHeight,
@@ -286,7 +284,7 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
         )
       : apps.length * (baseIconSize + baseSpacing) - baseSpacing;
 
-  const padding = Math.max(8, baseIconSize * 0.12);
+  const padding = Math.max(6, baseIconSize * 0.1); // Padding más pequeño
 
   return (
     <div
@@ -295,16 +293,16 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
       style={{
         width: `${contentWidth + padding * 2}px`,
         background: "rgba(45, 45, 45, 0.75)",
-        borderRadius: `${Math.max(12, baseIconSize * 0.4)}px`,
+        borderRadius: `${Math.max(10, baseIconSize * 0.35)}px`, // Border radius más pequeño
         border: "1px solid rgba(255, 255, 255, 0.15)",
         boxShadow: `
-          0 ${Math.max(4, baseIconSize * 0.1)}px ${Math.max(
-          16,
-          baseIconSize * 0.4
+          0 ${Math.max(3, baseIconSize * 0.08)}px ${Math.max(
+          12,
+          baseIconSize * 0.35
         )}px rgba(0, 0, 0, 0.4),
-          0 ${Math.max(2, baseIconSize * 0.05)}px ${Math.max(
-          8,
-          baseIconSize * 0.2
+          0 ${Math.max(1, baseIconSize * 0.04)}px ${Math.max(
+          6,
+          baseIconSize * 0.15
         )}px rgba(0, 0, 0, 0.3),
           inset 0 1px 0 rgba(255, 255, 255, 0.15),
           inset 0 -1px 0 rgba(0, 0, 0, 0.2)
@@ -353,29 +351,29 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
                 style={{
                   filter: `drop-shadow(0 ${
                     scale > 1.2
-                      ? Math.max(2, baseIconSize * 0.05)
-                      : Math.max(1, baseIconSize * 0.03)
+                      ? Math.max(1, baseIconSize * 0.04)
+                      : Math.max(1, baseIconSize * 0.02)
                   }px ${
                     scale > 1.2
-                      ? Math.max(4, baseIconSize * 0.1)
-                      : Math.max(2, baseIconSize * 0.06)
+                      ? Math.max(3, baseIconSize * 0.08)
+                      : Math.max(2, baseIconSize * 0.05)
                   }px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`,
                 }}
               />
 
-              {/* App Indicator Dot */}
+              {/* App Indicator Dot - más pequeño */}
               {openApps.includes(app.id) && (
                 <div
                   className="absolute"
                   style={{
-                    bottom: `${Math.max(-2, -baseIconSize * 0.05)}px`,
+                    bottom: `${Math.max(-2, -baseIconSize * 0.04)}px`,
                     left: "50%",
                     transform: "translateX(-50%)",
-                    width: `${Math.max(3, baseIconSize * 0.06)}px`,
-                    height: `${Math.max(3, baseIconSize * 0.06)}px`,
+                    width: `${Math.max(2, baseIconSize * 0.05)}px`, // Más pequeño
+                    height: `${Math.max(2, baseIconSize * 0.05)}px`, // Más pequeño
                     borderRadius: "50%",
                     backgroundColor: "rgba(255, 255, 255, 0.8)",
-                    boxShadow: "0 0 4px rgba(0, 0, 0, 0.3)",
+                    boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
                   }}
                 />
               )}
